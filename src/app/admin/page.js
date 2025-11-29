@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { ProductsTable } from "./components/ProductsTable";
 
@@ -19,7 +21,7 @@ export default async function AdminPage() {
                     Logout
                 </button>
             </div>
-            
+
 
             <div className="admin-table-box">
                 <ProductsTable products={products} />
