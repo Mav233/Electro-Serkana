@@ -1,23 +1,68 @@
-import { NextResponse } from "next/server";
 import { db } from "@/firebase/config";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { DATABASES } from "@/firebase/databases";
+import { doc, setDoc } from "firebase/firestore";
+import { NextResponse } from "next/server";
 
-export async function GET(request) {
-    const { searchParams } = new URL(request.url);
-    const category = searchParams.get("category")?.toLowerCase().trim() || "all";
+export async function POST(request) {
+    const body = await request.json();
 
-    const productsRef = collection(db, "products");
+    const { name, slug, description, price, stock, category, imageUrl } = body;
 
-    const q =
-        category === "all"
-            ? productsRef
-            : query(productsRef, where("category", "==", category));
+    if (!name || !slug || !description) {
+        return NextResponse.json(
+            {
+                error:
+                    "Por favor, completa todos los campos obligatorios: nombre, slug y descripción.",
+            },
+            { status: 400 }
+        );
+    }
 
-    const snapshot = await getDocs(q);
-    const products = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    }));
+    if (price <= 0 || stock <= 0) {
+        return NextResponse.json(
+            {
+                error: "El precio y la cantidad en stock deben ser mayores a 0.",
+            },
+            { status: 400 }
+        );
+    }
 
-    return NextResponse.json({ products });
+    if (imageUrl && !/^https?:\/\/.+\.(jpg|jpeg|png|gif)$/.test(imageUrl)) {
+        return NextResponse.json(
+            {
+                error: "Por favor, proporciona una URL de imagen válida.",
+            },
+            { status: 400 }
+        );
+    }
+
+    const product = {
+        name,
+        slug,
+        description,
+        price: parseFloat(price),
+        stock: parseInt(stock, 10),
+        category,
+        imageUrl: imageUrl || "",
+    };
+
+    try {
+        const docRef = doc(db, DATABASES.PRODUCTS, slug);
+
+        await setDoc(docRef, product);
+
+        return NextResponse.json(
+            {
+                message: "Producto creado exitosamente.",
+                product: { id: product.slug, ...product },
+            },
+            { status: 201 }
+        );
+    } catch (error) {
+        console.error("Error creating product:", error);
+        return NextResponse.json(
+            { error: "Error al crear el producto. Inténtalo de nuevo más tarde." },
+            { status: 500 }
+        );
+    }
 }

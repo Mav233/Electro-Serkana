@@ -1,49 +1,65 @@
+import { db } from "@/firebase/config";
+import { DATABASES } from "@/firebase/databases";
+import { deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
-import {
-    getProductById,
-    updateProductById,
-    deleteProductById,
-} from "@/firebase/products";
 
-// GET - Obtener producto
-export async function GET(_req, { params }) {
-    const { id } = params;
+// Obtener
+export async function GET(request, { params }) {
+    const { id } = await params;
 
-    try {
-        const product = await getProductById(id);
-        if (!product) {
-            return NextResponse.json({ error: "Producto no encontrado" }, { status: 404 });
-        }
-        return NextResponse.json(product);
-    } catch (error) {
-        console.error("Error al obtener producto:", error);
-        return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
-    }
+    const productRef = doc(db, DATABASES.PRODUCTS, id);
+
+    const productSnapshot = await getDoc(productRef);
+
+    console.log(productSnapshot.data());
+
+    return NextResponse.json({
+        id: productSnapshot.id,
+        ...productSnapshot.data(),
+    });
 }
 
-// PUT - Actualizar producto
+// Actualizar
 export async function PUT(request, { params }) {
-    const { id } = params;
+    const { id } = await params;
     const data = await request.json();
 
+    const docRef = doc(db, DATABASES.PRODUCTS, id);
+
     try {
-        await updateProductById(id, data);
-        return NextResponse.json({ message: "Producto actualizado correctamente", id, ...data });
+        await updateDoc(docRef, data);
+
+        return NextResponse.json({
+            message: "Product updated successfully",
+            id,
+            ...data,
+        });
     } catch (error) {
-        console.error("Error actualizando producto:", error);
-        return NextResponse.json({ error: "No se pudo actualizar el producto" }, { status: 500 });
+        console.error("Error updating product:", error);
+        return NextResponse.json(
+            { error: "Failed to update product" },
+            { status: 500 }
+        );
     }
 }
 
-// DELETE - Eliminar producto
-export async function DELETE(_req, { params }) {
-    const { id } = params;
+// Eliminar
+export async function DELETE(request, { params }) {
+    const { id } = await params;
+
+    const docRef = doc(db, DATABASES.PRODUCTS, id);
 
     try {
-        await deleteProductById(id);
-        return NextResponse.json({ message: "Producto eliminado correctamente", id });
+        await deleteDoc(docRef, id);
+        return NextResponse.json({
+            message: "Product deleted successfully",
+            id,
+        });
     } catch (error) {
-        console.error("Error eliminando producto:", error);
-        return NextResponse.json({ error: "No se pudo eliminar el producto" }, { status: 500 });
+        console.error("Error deleting product:", error);
+        return NextResponse.json(
+            { error: "Failed to delete product" },
+            { status: 500 }
+        );
     }
 }

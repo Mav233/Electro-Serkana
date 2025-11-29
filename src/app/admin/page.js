@@ -1,16 +1,29 @@
-"use client";
-import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import { ProductsTable } from "./components/ProductsTable";
 
-
-export default function AdminPage() {
-
-    const router = useRouter();
+export default async function AdminPage() {
+    const products = await fetch("http://localhost:3000/api/products/all").then(
+        (res) => res.json()
+    );
 
     return (
-        <div>
-            <h1>Admin Dashboard</h1>
-            <p>Welcome to the admin dashboard of Electrodomesticos Serkana.</p>
-            <button onClick={() => router.back()}>VOLVER</button>
+        <div className="admin-wrapper">
+            <h1 className="admin-title">Admin Section</h1>
+
+            <div className="admin-actions">
+                <Link className="admin-button" href="/admin/create">
+                    Crear nuevo producto
+                </Link>
+
+                <button className="admin-logout-btn">
+                    Logout
+                </button>
+            </div>
+            
+
+            <div className="admin-table-box">
+                <ProductsTable products={products} />
+            </div>
         </div>
     );
 }

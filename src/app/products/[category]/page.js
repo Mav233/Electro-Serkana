@@ -5,8 +5,8 @@ export async function generateMetadata({ params }) {
     const { category } = params;
     return {
         title: `Productos de ${category}`,
-        description: `Explora nuestra amplia gama de productos en la categoría ${category}. Encuentra lo mejor en electrodomésticos y más.`,
-        keywords: `productos, ${category}, electrodomésticos, tecnología, hogar`,
+        description: `Explora nuestra amplia gama de productos en la categoría ${category}.`,
+        keywords: `productos, ${category}, electrodomésticos, tecnología`,
     };
 }
 
@@ -23,19 +23,18 @@ export default function CategoryPage({ params }) {
     ];
 
     return (
-        <div className="p-6">
-            <h1 className="text-3xl font-bold mb-2">Productos en: {category}</h1>
-            <p className="mb-6 text-gray-600">
-                Explorá nuestra selección de productos en la categoría <strong>{category}</strong>.
+        <div className="category-wrapper">
+            <h1 className="category-title">Productos en: {category}</h1>
+            <p className="category-subtitle">
+                Explorá nuestra selección de productos en <strong>{category}</strong>.
             </p>
 
-            <div className="flex flex-wrap gap-2 mb-8">
+            <div className="category-filters">
                 {categories.map((cat) => (
                     <Link
                         key={cat.slug}
                         href={`/products/${cat.slug}`}
-                        className={`px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-800 transition ${cat.slug === category ? "font-bold ring-2 ring-white" : ""
-                            }`}
+                        className={`filter-btn ${cat.slug === category ? "filter-active" : ""}`}
                     >
                         {cat.label}
                     </Link>

@@ -21,13 +21,10 @@ export async function ProductList({ category }) {
                     ))}
                 </div>
             ) : (
-                <div className="flex items-center justify-center mt-10">
-                    <h3 className="text-2xl font-bold text-center">
-                        No hay productos en esta categoría
-                    </h3>
+                <div className="no-products">
+                    <h3>No hay productos en esta categoría</h3>
                 </div>
             )}
         </>
     );
-
 }

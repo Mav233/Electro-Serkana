@@ -1,22 +1,30 @@
 import Link from "next/link";
+
 export function ProductCard({ product }) {
     return (
-        <div className="product-card">
+        <div className="pcard">
             <img
                 src={product.imageURL}
                 alt={product.name}
+                className="pcard-img"
             />
-            <h4>{product.name}</h4>
-            <p>{product.description}</p>
-            <p className="product-price">${product.price.toFixed(2)}</p>
-            <span className="product-category">Categoría: {product.category}</span>
+
+            <h4 className="pcard-title">{product.name}</h4>
+
+            <p className="pcard-desc">{product.description}</p>
+
+            <p className="pcard-price">${product.price.toFixed(2)}</p>
+
+            <span className="pcard-category">
+                Categoría: {product.category}
+            </span>
+
             <Link
                 href={`/products/details/${product.id}`}
-                className="mt-4 px-4 py-2 bg-blue-500 rounded text-white"
+                className="pcard-btn"
             >
                 Ver detalles
             </Link>
-
         </div>
     );
 }

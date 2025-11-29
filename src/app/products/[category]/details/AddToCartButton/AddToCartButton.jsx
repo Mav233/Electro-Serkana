@@ -12,7 +12,7 @@ export default function AddToCartButton({ product }) {
 
     return (
         <button
-            className="mt-6 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded text-lg"
+            className="add-cart-btn"
             onClick={handleAddToCart}
         >
             🛒 Agregar al carrito

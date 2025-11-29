@@ -3,9 +3,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { useCart } from '@/context/CartContext';
 
 export function Navbar() {
     const pathname = usePathname();
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const { cartItems } = useCart();
+    const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
     const links = [
         { name: 'Inicio', href: '/' },
@@ -23,11 +29,24 @@ export function Navbar() {
                     <span>Serkana</span>
                 </Link>
 
-                <ul className="navbar-links">
+                {/* Botón hamburguesa */}
+                <button
+                    className="navbar-toggle"
+                    onClick={() => setMenuOpen(!menuOpen)}
+                    aria-label="Abrir menú"
+                >
+                    <span className={`bar ${menuOpen ? 'open' : ''}`}></span>
+                    <span className={`bar ${menuOpen ? 'open' : ''}`}></span>
+                    <span className={`bar ${menuOpen ? 'open' : ''}`}></span>
+                </button>
+
+                {/* Links principales */}
+                <ul className={`navbar-links ${menuOpen ? 'active' : ''}`}>
                     {links.map(({ name, href }) => (
                         <li key={name}>
                             <Link
                                 href={href}
+                                onClick={() => setMenuOpen(false)}
                                 className={pathname === href ? 'active' : ''}
                             >
                                 {name}
@@ -36,9 +55,12 @@ export function Navbar() {
                     ))}
                 </ul>
 
+                {/* Carrito */}
                 <Link href="/cart" className="navbar-cart">
                     <Image src="/cart.svg" alt="Carrito" width={32} height={32} />
-                    <span className="cart-badge">2</span>
+                    {cartCount > 0 && (
+                        <span className="cart-badge">{cartCount}</span>
+                    )}
                 </Link>
             </div>
         </nav>

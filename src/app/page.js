@@ -1,6 +1,3 @@
-import Counter from './components/Counter';
-import Image from 'next/image';
-
 export const metadata = {
   title: 'Electrodomésticos Serkana',
   description: 'Tu tienda de electrodomésticos online',
@@ -8,8 +5,8 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <main className="flex items-center justify-center min-h-screen pt-24 text-center px-4">
-      <h1 className="text-4xl md:text-5xl font-bold neon-text">
+    <main className="home-wrapper">
+      <h1 className="home-title typing-effect">
         Tu tienda de electrodomésticos online
       </h1>
     </main>
